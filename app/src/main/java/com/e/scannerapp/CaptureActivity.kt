@@ -25,17 +25,29 @@ class CaptureActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED)
-            ActivityCompat.requestPermissions(this,
-                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),1)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_capture)
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        )
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1
+            )
+
+
         camerakitview = binding.camerakit
         captureBtn = binding.captureBtn
-        callback = CameraKitView.ImageCallback { cameraKitView, capturedImage ->
 
+
+        callback = CameraKitView.ImageCallback { cameraKitView, capturedImage ->
+            val file_path = Environment.getExternalStorageDirectory()
             val directory =
-                File(Environment.getExternalStorageDirectory().path + File.separator + "zeeshankiphoto")
+                File(file_path.toString() + "/scannerapp_pdf")
             directory.mkdir()
+
+
             val savedPhoto = File(directory, "myimage.jpg")
             Log.d("mytag", "savePhoto " + savedPhoto.path)
             try {
@@ -53,6 +65,7 @@ class CaptureActivity : AppCompatActivity(), View.OnClickListener {
 
 
     }
+
 
     override fun onStart() {
         super.onStart()
@@ -81,15 +94,17 @@ class CaptureActivity : AppCompatActivity(), View.OnClickListener {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         camerakitview.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode==1 && grantResults[0]!=PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this,
-                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),1)
+        if (requestCode==1 && grantResults[0]!=PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1
+            )
 
         }
     }
 
     override fun onClick(v: View?) {
-        Log.d("mytag","onclick called")
+        Log.d("mytag", "onclick called")
         camerakitview.captureImage(callback)
     }
 
