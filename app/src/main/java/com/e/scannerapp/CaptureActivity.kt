@@ -16,12 +16,14 @@ import com.e.scannerapp.databinding.ActivityCaptureBinding
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.text.SimpleDateFormat
 
 class CaptureActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityCaptureBinding
     private lateinit var captureBtn: ImageButton
     lateinit var camerakitview: CameraKitView
     private lateinit var callback: CameraKitView.ImageCallback
+    val dateFormat = SimpleDateFormat("dd-MMM-yyyy HH:mm:ss a")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
@@ -65,6 +67,32 @@ class CaptureActivity : AppCompatActivity(), View.OnClickListener {
 
 
     }
+
+
+    /*fun createPDF() {
+
+
+        //val dateFormat = SimpleDateFormat("ddMMyyyy_HHmm")
+        val outputStream = FileOutputStream(
+            File(
+                Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DOWNLOADS
+                ),
+                pdf_name + dateFormat.format(Calendar.getInstance().time) + ".pdf"
+            )
+        )
+        val writer: PdfWriter = PdfWriter.getInstance(document, outputStream)
+
+        //Open the document
+        document.open()
+        val img: Image = Image.getInstance("IMG_0239.jpg")
+        document.add(img)
+        document.close()
+        document.setPageSize(PageSize.A4)
+        document.addCreationDate()
+        document.addAuthor("AndroPDF")
+        document.addCreator("http://chonchol.me")
+    }*/
 
 
     override fun onStart() {
