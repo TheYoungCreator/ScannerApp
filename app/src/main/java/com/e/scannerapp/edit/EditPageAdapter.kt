@@ -11,7 +11,7 @@ import com.e.scannerapp.R
 import kotlinx.android.synthetic.main.single_image_layout.view.*
 import java.io.File
 
-class EditPageAdapter(private val listOfImages:MutableList<Image>): RecyclerView.Adapter<EditPageAdapter.EditHolder>() {
+class EditPageAdapter(private val listOfImages:MutableList<Uri>): RecyclerView.Adapter<EditPageAdapter.EditHolder>() {
 
     class EditHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val imageView = itemView.findViewById<ImageView>(R.id.image_view)
@@ -24,7 +24,7 @@ class EditPageAdapter(private val listOfImages:MutableList<Image>): RecyclerView
 
     override fun onBindViewHolder(holder: EditHolder, position: Int) {
         with(holder.itemView){
-            Glide.with(this.context).load(listOfImages[position].imageUrl).into(image_view)
+            Glide.with(this.context).load(listOfImages[position]).into(image_view)
         }
     }
 

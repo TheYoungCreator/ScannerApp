@@ -1,6 +1,9 @@
 package com.e.scannerapp.capture
 
 import android.Manifest
+import android.app.Activity
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.net.Uri
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -16,9 +19,11 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.e.scannerapp.CaptureActivity
 import com.e.scannerapp.R
 import com.e.scannerapp.databinding.CaptureFragmentBinding
+import com.e.scannerapp.edit.ImageParcelable
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -29,16 +34,20 @@ class captureFragment : Fragment(), View.OnClickListener {
 
     private lateinit var binding: CaptureFragmentBinding
 
+    private val uriList = mutableListOf<Uri>()
+
     //camerax
     private var imageCapture: ImageCapture? = null
 
     private lateinit var cameraExecutor: ExecutorService
 
     companion object {
-        private const val TAG = "CameraXBasic"
+        private const val TAG = "myTag"
+        private const val PHOTO_REQUEST_CODE = 12
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         val outputDirectory: File = File(
-            Environment.getExternalStorageDirectory().path + File.separator + "ScannerApp")
+            Environment.getExternalStorageDirectory().path + File.separator + "ScannerApp"
+        )
 
     }
 
@@ -59,11 +68,10 @@ class captureFragment : Fragment(), View.OnClickListener {
     }
 
 
-
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this.requireContext())
 
-        cameraProviderFuture.addListener(Runnable {
+        cameraProviderFuture.addListener({
             // Used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
@@ -104,7 +112,7 @@ class captureFragment : Fragment(), View.OnClickListener {
         val photoFile = File(
             outputDirectory,
             SimpleDateFormat(
-                captureFragment.FILENAME_FORMAT, Locale.US
+                FILENAME_FORMAT, Locale.US
             ).format(System.currentTimeMillis()) + ".jpg"
         )
 
@@ -118,29 +126,70 @@ class captureFragment : Fragment(), View.OnClickListener {
             ContextCompat.getMainExecutor(requireContext()),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onError(exc: ImageCaptureException) {
-                    Log.e(captureFragment.TAG, "Photo capture failed: ${exc.message}", exc)
+                    Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     val savedUri = Uri.fromFile(photoFile)
+                    uriList.add(savedUri)
+                    activity?.let { Glide.with(it).load(uriList.last()).into(binding.previewBtn) }
                     val msg = "Photo capture succeeded: $savedUri"
                     Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-                    Log.d(captureFragment.TAG, msg)
+                    Log.d(TAG, msg)
                 }
             })
     }
 
 
     private fun setListeners() {
+
         binding.captureBtn.setOnClickListener(this)
-        binding.next.setOnClickListener(this)
+        binding.previewBtn.setOnClickListener(this)
+        binding.importBtn.setOnClickListener(this)
+
     }
 
 
+    private fun importImage() {
+
+        Intent(Intent.ACTION_GET_CONTENT).apply {
+            type = "image/*"
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }.also { startActivityForResult(Intent.createChooser(it,"Choose Multiple Images"),PHOTO_REQUEST_CODE) }
+    }
+
     override fun onClick(view: View?) {
-        when(view?.id){
+        when (view?.id) {
             binding.captureBtn.id -> takePhoto()
-            binding.next.id -> findNavController().navigate(R.id.action_captureFragment_to_editFragment)
+            binding.previewBtn.id -> moveToPreview()
+            binding.importBtn.id -> importImage()
+        }
+    }
+
+    private fun moveToPreview() {
+        val parcelable = ImageParcelable(uriList)
+        val action = captureFragmentDirections.actionCaptureFragmentToEditFragment(parcelable)
+        findNavController().navigate(action)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (uriList.isNotEmpty())
+            Glide.with(this).load(uriList.last()).into(binding.previewBtn)
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode== PHOTO_REQUEST_CODE && resultCode== RESULT_OK){
+            data?.clipData?.apply {
+                for (i in 0 until itemCount){
+                         uriList.add(
+                             getItemAt(i).uri
+                         )
+                }
+                binding.previewBtn.setImageURI(uriList.last())
+            }
         }
     }
 

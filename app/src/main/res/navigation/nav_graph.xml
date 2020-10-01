@@ -12,11 +12,22 @@
         tools:layout="@layout/capture_fragment" >
         <action
             android:id="@+id/action_captureFragment_to_editFragment"
-            app:destination="@id/editFragment" />
+            app:destination="@id/editFragment" >
+            <argument
+                android:name="imageParcelable"
+                app:argType="com.e.scannerapp.edit.ImageParcelable"
+                />
+        </action>
+
     </fragment>
     <fragment
         android:id="@+id/editFragment"
         android:name="com.e.scannerapp.edit.EditFragment"
         android:label="edit_fragment"
-        tools:layout="@layout/edit_fragment" />
+        tools:layout="@layout/edit_fragment" >
+        <argument
+            android:name="imageParcelable"
+            app:argType="com.e.scannerapp.edit.ImageParcelable"
+            />
+    </fragment>
 </navigation>

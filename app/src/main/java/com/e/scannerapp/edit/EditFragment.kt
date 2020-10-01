@@ -1,22 +1,17 @@
 package com.e.scannerapp.edit
 
 import android.net.Uri
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.ViewPager
+import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.CompositePageTransformer
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
-import com.e.scannerapp.CaptureActivity
 import com.e.scannerapp.R
-import com.e.scannerapp.capture.captureFragment
-import java.io.File
-import java.lang.Math.abs
+import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator
 
 class EditFragment : Fragment() {
 
@@ -26,8 +21,12 @@ class EditFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.edit_fragment, container, false)
         val viewPager2 = root.findViewById<ViewPager2>(R.id.view_pager2)
+        val springIndicator = root.findViewById<SpringDotsIndicator>(R.id.spring_viewpager_indicator)
+
         viewPager2.apply {
-            adapter = EditPageAdapter(getAllFiles())
+
+            adapter = EditPageAdapter(getAllUris())
+            springIndicator.setViewPager2(viewPager2)
             clipChildren = false
             clipToPadding = false
             offscreenPageLimit = 3
@@ -45,15 +44,17 @@ class EditFragment : Fragment() {
         return root
     }
 
-    private fun getAllFiles(): MutableList<Image> {
-        val directory = captureFragment.outputDirectory
-        val ls = mutableListOf<Image>()
-        if (directory.isDirectory && directory.exists()){
-            directory.listFiles().forEach {
-                ls.add(Image(Uri.fromFile(it)))
-            }
-        }
-        return ls
+    private fun getAllUris(): MutableList<Uri> {
+//        val directory = captureFragment.outputDirectory
+//        val ls = mutableListOf<Image>()
+//        if (directory.isDirectory && directory.exists()){
+//            directory.listFiles().forEach {
+//                ls.add(Image(Uri.fromFile(it)))
+//            }
+//        }
+//        return ls
+        val args:EditFragmentArgs by navArgs()
+        return args.imageParcelable.ls.reversed().toMutableList()
     }
 
 
