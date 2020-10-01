@@ -17,7 +17,7 @@
             android:layout_height="0dp"
             android:layout_alignParentTop="true"
             android:layout_above="@id/bottom_container"
-            android:background="@android:color/holo_blue_light"
+
             android:paddingStart="35dp"
             android:paddingEnd="35dp"
             android:animationCache="true"
@@ -25,14 +25,51 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             />
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/bottom_container"
             android:layout_width="match_parent"
             android:layout_height="100dp"
+            android:padding="10dp"
             android:background="@android:color/holo_blue_dark"
             android:layout_alignParentBottom="true"
             android:orientation="horizontal"
-            />
+            >
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:text="delete"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/button3"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="rotate"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="filter"
+                app:layout_constraintStart_toEndOf="@+id/button"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="crop"
+                app:layout_constraintStart_toEndOf="@+id/button2"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </RelativeLayout>
 
@@ -41,8 +78,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:dampingRatio="0.5"
-        app:dotsColor="@color/yellow"
-        app:dotsStrokeColor="@android:color/white"
+        app:dotsColor="#000"
+        app:dotsStrokeColor="@android:color/holo_blue_light"
         app:dotsCornerRadius="8dp"
         app:dotsSize="13dp"
         app:dotsSpacing="6dp"
@@ -52,5 +89,6 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="105dp"
         />
+
 
 </RelativeLayout>
