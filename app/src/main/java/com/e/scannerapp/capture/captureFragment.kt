@@ -8,6 +8,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -151,12 +152,17 @@ class captureFragment : Fragment(), View.OnClickListener {
 
 
     private fun importImage() {
-
-        Intent(Intent.ACTION_GET_CONTENT).apply {
+        Intent().apply {
             type = "image/*"
-            putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+            action = Intent.ACTION_GET_CONTENT
             flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }.also { startActivityForResult(Intent.createChooser(it,"Choose Multiple Images"),PHOTO_REQUEST_CODE) }
+        }.also {
+            startActivityForResult(
+                Intent.createChooser(it, "Choose Multiple Images"),
+                PHOTO_REQUEST_CODE
+            )
+        }
     }
 
     override fun onClick(view: View?) {
@@ -178,18 +184,31 @@ class captureFragment : Fragment(), View.OnClickListener {
         if (uriList.isNotEmpty())
             Glide.with(this).load(uriList.last()).into(binding.previewBtn)
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        Log.d("mytag", "img ${data?.data.toString()}")
+        Log.d("mytag", "loop ${data?.clipData.toString()}")
+        if (requestCode == PHOTO_REQUEST_CODE && resultCode == RESULT_OK) {
 
-        if (requestCode== PHOTO_REQUEST_CODE && resultCode== RESULT_OK){
-            data?.clipData?.apply {
-                for (i in 0 until itemCount){
-                         uriList.add(
-                             getItemAt(i).uri
-                         )
+            data?.apply {
+                if (this.data == null) {
+                    clipData?.apply {
+                        for (i in 0 until itemCount) {
+
+                            uriList.add(
+                                getItemAt(i).uri
+                            )
+                        }
+                    }
+                } else {
+                    this.data?.let {
+                        uriList.add(it)
+                    }
                 }
                 binding.previewBtn.setImageURI(uriList.last())
             }
+
         }
     }
 
