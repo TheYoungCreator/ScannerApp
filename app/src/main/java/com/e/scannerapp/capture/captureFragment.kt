@@ -56,11 +56,8 @@ class captureFragment : Fragment(), View.OnClickListener {
 
         //listeners
         setListeners()
-
         cameraExecutor = Executors.newSingleThreadExecutor()
-
         startCamera()
-
         return binding.root
     }
 
@@ -129,6 +126,8 @@ class captureFragment : Fragment(), View.OnClickListener {
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     val savedUri = Uri.fromFile(photoFile)
                     uriList.add(savedUri)
+//                    Log.d("list", uriList[1].toString())
+                   // Log.d("list size", uriList?.size.toString())
                     activity?.let { Glide.with(it).load(uriList.last()).into(binding.previewBtn) }
                     val msg = "Photo capture succeeded: $savedUri"
                     Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
