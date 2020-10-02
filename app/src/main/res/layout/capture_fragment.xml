@@ -9,8 +9,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
-
         >
 
         <androidx.camera.view.PreviewView
@@ -23,7 +21,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="90dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -39,20 +37,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <androidx.appcompat.widget.AppCompatImageButton
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/import_btn"
-                    android:layout_width="@dimen/btn_size"
-                    android:layout_height="@dimen/btn_size"
-                    android:background="@drawable/import_btn_bg"
-                    />
-
-                <TextView
-                    android:id="@+id/import_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:drawableTop="@drawable/import_btn_bg"
                     android:text="import"
-                    android:textSize="@dimen/text_size"
-                    app:layout_constraintTop_toBottomOf="@id/import_btn" />
+                    android:textSize="10sp"
+                    />
             </LinearLayout>
 
             <androidx.appcompat.widget.AppCompatImageButton
@@ -84,6 +76,8 @@
                     android:layout_height="match_parent"
                     tools:background="@drawable/multiple_images"
                     android:layout_margin="5dp"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
                     />
 
 

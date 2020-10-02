@@ -30,4 +30,5 @@
             app:argType="com.e.scannerapp.edit.ImageParcelable"
             />
     </fragment>
+
 </navigation>

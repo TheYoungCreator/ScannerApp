@@ -14,7 +14,6 @@ import java.io.File
 class EditPageAdapter(private val listOfImages:MutableList<Uri>): RecyclerView.Adapter<EditPageAdapter.EditHolder>() {
 
     class EditHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val imageView = itemView.findViewById<ImageView>(R.id.image_view)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EditHolder {

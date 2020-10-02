@@ -1,4 +1,4 @@
-package com.e.scannerapp
+package com.e.scannerapp.main
 
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -6,9 +6,11 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
+import com.e.scannerapp.CaptureActivity
+import com.e.scannerapp.R
 import com.e.scannerapp.databinding.ActivityMainBinding
-import java.util.jar.Manifest
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,12 +23,31 @@ class MainActivity : AppCompatActivity() {
                 this, arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE,android.Manifest.permission.CAMERA),
                 11
             )
-        binding = DataBindingUtil.setContentView(this,R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.fab.setOnClickListener { moveToCapture() }
+
+        //settingUp RecyclerView of MainActivity
+        setUpHome()
     }
 
+    private fun setUpHome() {
+        with(binding.recyclerView){
+            val pdfAdapter = MainAdapter()
+            pdfAdapter.submitList(fakeList())
+            adapter = pdfAdapter
+        }
+
+    }
+
+    private fun fakeList(): MutableList<PdfModel>?  = mutableListOf<PdfModel>()
+        .apply {
+            val pdfModel = PdfModel("pdf name","10/20/2020","name".toUri())
+            for (i in 1..5)
+                this.add(pdfModel)
+        }
+
     private fun moveToCapture() {
-        startActivity(Intent(this,CaptureActivity::class.java))
+        startActivity(Intent(this, CaptureActivity::class.java))
     }
 
     override fun onRequestPermissionsResult(

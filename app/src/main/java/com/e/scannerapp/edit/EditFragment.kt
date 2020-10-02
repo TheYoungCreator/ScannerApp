@@ -5,28 +5,16 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.DialogFragmentNavigatorDestinationBuilder
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.CompositePageTransformer
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
-import com.e.scannerapp.CaptureActivity
-import com.e.scannerapp.MainActivity
 import com.e.scannerapp.R
-import com.e.scannerapp.databinding.ActivityMainBinding
 import com.e.scannerapp.databinding.EditFragmentBinding
-import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator
-import com.theartofdev.edmodo.cropper.CropImage
-import com.theartofdev.edmodo.cropper.CropImageView
-import kotlinx.android.synthetic.main.edit_fragment.*
 import kotlinx.android.synthetic.main.single_image_layout.*
-import java.util.jar.Manifest
-import kotlin.properties.Delegates
 
 
 class EditFragment : Fragment(), View.OnClickListener {
@@ -72,32 +60,23 @@ class EditFragment : Fragment(), View.OnClickListener {
         }
 
 
-        settingListener()
+        settingListeners()
         return binding.root
     }
 
     private fun getAllUris(): MutableList<Uri> {
-//        val directory = captureFragment.outputDirectory
-//        val ls = mutableListOf<I  mage>()
-//        if (directory.isDirectory && directory.exists()){
-//            directory.listFiles().forEach {
-//                ls.add(Image(Uri.fromFile(it)))
-//            }
-//        }
-//        return ls
         val args: EditFragmentArgs by navArgs()
-        val listOfUri = args.imageParcelable.ls.reversed().toMutableList()
-        return listOfUri
+        return args.imageParcelable.ls.reversed().toMutableList()
     }
 
-    fun settingListener() {
+    fun settingListeners() {
         binding.btnRotate.setOnClickListener(this)
     }
 
     fun rotateImage() {
 
-        image_view.rotation = image_view.rotation +90F
-        Log.d("rotate","rotated by 90")
+        image_view.rotation = image_view.rotation + 90F
+        Log.d("rotate", "rotated by 90")
     }
 
 
