@@ -178,7 +178,6 @@ class captureFragment : Fragment(), View.OnClickListener {
         val action = captureFragmentDirections.actionCaptureFragmentToEditFragment(parcelable)
         findNavController().navigate(action)
     }
-
     override fun onResume() {
         super.onResume()
         if (uriList.isNotEmpty())
