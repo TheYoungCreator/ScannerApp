@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
@@ -21,6 +22,7 @@ class EditFragment : Fragment(), View.OnClickListener {
 
     private var imgPosition: Int = 0
     private lateinit var binding: EditFragmentBinding
+    private lateinit var editPageAdapter: EditPageAdapter
 
 
     override fun onCreateView(
@@ -42,8 +44,8 @@ class EditFragment : Fragment(), View.OnClickListener {
             })
 
             viewPager2.apply {
-
-                adapter = EditPageAdapter(getAllUris())
+                editPageAdapter = EditPageAdapter(getAllUris())
+                adapter = editPageAdapter
 
                 binding.springViewpagerIndicator.setViewPager2(viewPager2)
                 clipChildren = false
@@ -72,17 +74,6 @@ class EditFragment : Fragment(), View.OnClickListener {
         return args.imageParcelable.ls.reversed().toMutableList()
     }
 
-    fun settingListeners() {
-        binding.btnRotate.setOnClickListener(this)
-    }
-
-    fun rotateImage() {
-        image_view?.let {
-            it.rotation += 90F
-        }
-        Log.d("rotate", "rotated by 90")
-    }
-
 
     private fun cropIage(list_of_uri: MutableList<Uri>) {
         val urls = getAllUris()//list o
@@ -91,10 +82,43 @@ class EditFragment : Fragment(), View.OnClickListener {
         cropImageView.getCroppedImageAsync();
     }
 
+    fun settingListeners() {
+        binding.btnRotate.setOnClickListener(this)
+        binding.btnDelete.setOnClickListener(this)
+
+    }
+
+    fun rotateImage() {
+
+        image_view.rotation = image_view.rotation + 90F
+        Log.d("rotate", "rotated by 90")
+
+    }
+
+
+    private fun cropImage() {
+        val urls = getAllUris()
+        cropImageView.setImageUriAsync(urls[imgPosition]);
+// or (prefer using uri for performance and better user experience)
+        cropImageView.getCroppedImageAsync();
+        Log.d("crop", "cropped  image at position" + imgPosition.toString())
+    }
+
+
+    private fun deleteImage() {
+        Log.d("mytag","delete img"+editPageAdapter.listOfImages.size)
+        if (editPageAdapter.listOfImages.size > 0) {
+            editPageAdapter.listOfImages.removeAt(imgPosition)
+            editPageAdapter.notifyItemRemoved(imgPosition)
+        }else
+            Toast.makeText(activity?.applicationContext,"nothing to delete",Toast.LENGTH_SHORT)
+    }
+
     override fun onClick(view: View?) {
         when (view?.id) {
+            binding.cropBtn.id -> cropImage()
             binding.btnRotate.id -> rotateImage()
-
+            binding.btnDelete.id -> deleteImage()
         }
     }
 

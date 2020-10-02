@@ -11,7 +11,7 @@ import com.e.scannerapp.R
 import kotlinx.android.synthetic.main.single_image_layout.view.*
 import java.io.File
 
-class EditPageAdapter(private val listOfImages:MutableList<Uri>): RecyclerView.Adapter<EditPageAdapter.EditHolder>() {
+class EditPageAdapter(val listOfImages:MutableList<Uri>): RecyclerView.Adapter<EditPageAdapter.EditHolder>() {
 
     class EditHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
