@@ -35,6 +35,9 @@ class EditFragment : Fragment(), View.OnClickListener {
                     super.onPageSelected(position)
                     imgPosition = position
                     Log.d("position", imgPosition.toString())
+                    image_view?.let {
+                        it.rotation = 0F
+                    }
                 }
             })
 
@@ -74,8 +77,9 @@ class EditFragment : Fragment(), View.OnClickListener {
     }
 
     fun rotateImage() {
-
-        image_view.rotation = image_view.rotation + 90F
+        image_view?.let {
+            it.rotation += 90F
+        }
         Log.d("rotate", "rotated by 90")
     }
 

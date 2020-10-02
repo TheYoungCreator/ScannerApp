@@ -24,28 +24,24 @@
             android:layout_height="90dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            android:background="#000000"
+            >
 
-            <LinearLayout
-                android:id="@+id/container_gallery"
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/import_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical"
+                android:drawableTop="@drawable/import_btn_bg"
+                android:text="import"
+                android:textSize="@dimen/textSize"
+                style="@style/Widget.AppCompat.Button.Borderless"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/capture_btn"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/import_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawableTop="@drawable/import_btn_bg"
-                    android:text="import"
-                    android:textSize="10sp"
-                    />
-            </LinearLayout>
+                app:layout_constraintTop_toTopOf="parent"
+                android:textColor="@android:color/white"
+                />
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/capture_btn"
