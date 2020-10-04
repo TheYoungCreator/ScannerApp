@@ -7,14 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.CompositePageTransformer
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import com.e.scannerapp.R
+import com.e.scannerapp.SharedViewModel
 import com.e.scannerapp.databinding.EditFragmentBinding
+import com.phelat.navigationresult.BundleFragment
 import kotlinx.android.synthetic.main.single_image_layout.*
 
 
@@ -23,7 +27,7 @@ class EditFragment : Fragment(), View.OnClickListener {
     private var imgPosition: Int = 0
     private lateinit var binding: EditFragmentBinding
     private lateinit var editPageAdapter: EditPageAdapter
-
+    val model: SharedViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,6 +66,7 @@ class EditFragment : Fragment(), View.OnClickListener {
                 setPageTransformer(compositePageTransformer)
 
             }
+
         }
 
 
@@ -88,6 +93,7 @@ class EditFragment : Fragment(), View.OnClickListener {
 
     }
 
+
     fun rotateImage() {
 
         image_view.rotation = image_view.rotation + 90F
@@ -106,12 +112,16 @@ class EditFragment : Fragment(), View.OnClickListener {
 
 
     private fun deleteImage() {
-        Log.d("mytag","delete img"+editPageAdapter.listOfImages.size)
         if (editPageAdapter.listOfImages.size > 0) {
             editPageAdapter.listOfImages.removeAt(imgPosition)
+            model.mutableLiveData.value?.removeAt(imgPosition)
             editPageAdapter.notifyItemRemoved(imgPosition)
-        }else
-            Toast.makeText(activity?.applicationContext,"nothing to delete",Toast.LENGTH_SHORT)
+
+        } else {
+
+            Toast.makeText(activity?.applicationContext, "nothing to delete", Toast.LENGTH_SHORT)
+        }
+
     }
 
     override fun onClick(view: View?) {
@@ -121,6 +131,4 @@ class EditFragment : Fragment(), View.OnClickListener {
             binding.btnDelete.id -> deleteImage()
         }
     }
-
-
 }

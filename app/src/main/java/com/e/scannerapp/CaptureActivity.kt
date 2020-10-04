@@ -7,6 +7,8 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import com.e.scannerapp.edit.EditFragment
 
 class CaptureActivity : AppCompatActivity(){
 
@@ -21,27 +23,10 @@ class CaptureActivity : AppCompatActivity(){
         setContentView(R.layout.activity_capture)
 
 
-        /*
-        Request camera permissions
-        private fun createImg(capturedImage: ByteArray) {
-        directory.mkdir()
-        val savedPhoto = File(directory, "${dateFormat.format(System.currentTimeMillis())}.jpg")
-        Log.d("myTag", "savePhoto " + savedPhoto.path)
-        try {
-        val outputStream = FileOutputStream(savedPhoto.path)
-        outputStream.write(capturedImage)
-        outputStream.close()
-        Log.d("myTag", "output streamer")
-        } catch (e: IOException) {
-        Log.d("myTag", "output streamer error")
-        e.printStackTrace()
-        }*/
-
-
 
 
     }
-    
+
 }
 
 

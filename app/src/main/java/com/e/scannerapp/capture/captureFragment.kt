@@ -15,11 +15,14 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
-import com.e.scannerapp.CaptureActivity
 import com.e.scannerapp.R
+import com.e.scannerapp.SharedViewModel
 import com.e.scannerapp.databinding.CaptureFragmentBinding
+import com.e.scannerapp.edit.EditFragmentArgs
 import com.e.scannerapp.edit.ImageParcelable
 import java.io.File
 import java.text.SimpleDateFormat
@@ -31,7 +34,8 @@ class captureFragment : Fragment(), View.OnClickListener {
 
     private lateinit var binding: CaptureFragmentBinding
 
-    private val uriList = mutableListOf<Uri>()
+    //private val uriList = mutableListOf<Uri>()
+    val model:SharedViewModel by activityViewModels()
 
     //camerax
     private var imageCapture: ImageCapture? = null
@@ -125,10 +129,10 @@ class captureFragment : Fragment(), View.OnClickListener {
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     val savedUri = Uri.fromFile(photoFile)
-                    uriList.add(savedUri)
-//                    Log.d("list", uriList[1].toString())
+                    //uriList.add(savedUri)
+                    model.mutableLiveData.value?.add(savedUri)
                    // Log.d("list size", uriList?.size.toString())
-                    activity?.let { Glide.with(it).load(uriList.last()).into(binding.previewBtn) }
+                    activity?.let { Glide.with(it).load(savedUri).into(binding.previewBtn) }
                     val msg = "Photo capture succeeded: $savedUri"
                     Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
@@ -169,6 +173,7 @@ class captureFragment : Fragment(), View.OnClickListener {
     }
 
     private fun moveToPreview() {
+        val uriList = model.mutableLiveData.value?: mutableListOf()
         val parcelable = ImageParcelable(uriList)
         val action = captureFragmentDirections.actionCaptureFragmentToEditFragment(parcelable)
         findNavController().navigate(action)
@@ -176,8 +181,10 @@ class captureFragment : Fragment(), View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
+        val uriList = model.mutableLiveData.value?: mutableListOf()
         if (uriList.isNotEmpty())
             Glide.with(this).load(uriList.last()).into(binding.previewBtn)
+        Log.d("mytag","onresume capture ${model.mutableLiveData.value}")
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -191,20 +198,22 @@ class captureFragment : Fragment(), View.OnClickListener {
                     clipData?.apply {
                         for (i in 0 until itemCount) {
 
-                            uriList.add(
-                                getItemAt(i).uri
-                            )
+                            //uriList.add(getItemAt(i).uri)
+                            model.mutableLiveData.value?.add(getItemAt(i).uri)
                         }
                     }
                 } else {
                     this.data?.let {
-                        uriList.add(it)
+                        //uriList.add(it)
+                        model.mutableLiveData.value?.add(it)
                     }
                 }
-                binding.previewBtn.setImageURI(uriList.last())
+                //binding.previewBtn.setImageURI(uriList.last())
+                binding.previewBtn.setImageURI(model.mutableLiveData.value?.last())
             }
 
         }
     }
+
 
 }

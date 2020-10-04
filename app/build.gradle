@@ -78,4 +78,7 @@ dependencies {
     implementation 'com.tbuonomo.andrui:viewpagerdotsindicator:4.1.2'
 
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
+
+    // navigationresult
+    implementation 'com.phelat:navigationresult:1.0.1'
 }
