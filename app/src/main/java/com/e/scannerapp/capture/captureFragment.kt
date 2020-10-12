@@ -2,9 +2,13 @@ package com.e.scannerapp.capture
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.media.Image
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,28 +18,29 @@ import android.widget.Toast
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import androidx.core.net.toFile
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.e.scannerapp.R
 import com.e.scannerapp.SharedViewModel
 import com.e.scannerapp.databinding.CaptureFragmentBinding
-import com.e.scannerapp.edit.EditFragmentArgs
-import com.e.scannerapp.edit.ImageParcelable
+import com.e.scannerapp.edit.ImageModel
 import java.io.File
+import java.io.InputStream
+import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.math.log
 
 class captureFragment : Fragment(), View.OnClickListener {
 
     private lateinit var binding: CaptureFragmentBinding
 
-    //private val uriList = mutableListOf<Uri>()
-    val model:SharedViewModel by activityViewModels()
+    val model: SharedViewModel by activityViewModels()
 
     //camerax
     private var imageCapture: ImageCapture? = null
@@ -69,7 +74,7 @@ class captureFragment : Fragment(), View.OnClickListener {
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this.requireContext())
 
-        cameraProviderFuture.addListener(Runnable{
+        cameraProviderFuture.addListener(Runnable {
             // Used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
@@ -129,13 +134,14 @@ class captureFragment : Fragment(), View.OnClickListener {
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     val savedUri = Uri.fromFile(photoFile)
-                    //uriList.add(savedUri)
-                    model.mutableLiveData.value?.add(savedUri)
-                   // Log.d("list size", uriList?.size.toString())
-                    activity?.let { Glide.with(it).load(savedUri).into(binding.previewBtn) }
-                    val msg = "Photo capture succeeded: $savedUri"
-                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-                    Log.d(TAG, msg)
+                    val bitmap = BitmapFactory.decodeFile(photoFile.path)
+                    activity?.let {
+                        Glide.with(it).load(savedUri).into(binding.previewBtn)
+
+                    }
+                    Log.d("mytag","onimage saved")
+                    model.imageList.add(ImageModel(bitmap,savedUri))
+
                 }
             })
     }
@@ -173,47 +179,51 @@ class captureFragment : Fragment(), View.OnClickListener {
     }
 
     private fun moveToPreview() {
-        val uriList = model.mutableLiveData.value?: mutableListOf()
-        val parcelable = ImageParcelable(uriList)
-        val action = captureFragmentDirections.actionCaptureFragmentToEditFragment(parcelable)
-        findNavController().navigate(action)
+        model.setLiveData()
+        findNavController().navigate(R.id.action_captureFragment_to_editFragment)
     }
 
     override fun onResume() {
         super.onResume()
-        val uriList = model.mutableLiveData.value?: mutableListOf()
-        if (uriList.isNotEmpty())
-            Glide.with(this).load(uriList.last()).into(binding.previewBtn)
-        Log.d("mytag","onresume capture ${model.mutableLiveData.value}")
+        if (model.imageList.size!=0)
+        binding.previewBtn.setImageURI(model.imageList.last().uri)
+        Log.d("mytag","onresume is called")
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Log.d("mytag", "img ${data?.data.toString()}")
-        Log.d("mytag", "loop ${data?.clipData.toString()}")
         if (requestCode == PHOTO_REQUEST_CODE && resultCode == RESULT_OK) {
 
             data?.apply {
                 if (this.data == null) {
+
                     clipData?.apply {
                         for (i in 0 until itemCount) {
-
-                            //uriList.add(getItemAt(i).uri)
-                            model.mutableLiveData.value?.add(getItemAt(i).uri)
+                            val uri = this.getItemAt(i).uri
+                            val bitmap = BitmapFactory.decodeStream(
+                                context?.contentResolver?.openInputStream(uri)
+                            )
+                            model.imageList.add(ImageModel(bitmap,uri))
                         }
                     }
-                } else {
+                }
+                else {
                     this.data?.let {
-                        //uriList.add(it)
-                        model.mutableLiveData.value?.add(it)
+                        val bitmap = BitmapFactory.decodeStream(
+                            context?.contentResolver?.openInputStream(it)
+                        )
+                        model.imageList.add(ImageModel(bitmap, it))
                     }
                 }
-                //binding.previewBtn.setImageURI(uriList.last())
-                binding.previewBtn.setImageURI(model.mutableLiveData.value?.last())
+
             }
 
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        Log.d("mytag","capture last count ${model.imageList.size}")
+    }
 
 }

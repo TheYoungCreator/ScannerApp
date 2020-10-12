@@ -10,17 +10,10 @@
         android:name="com.e.scannerapp.capture.captureFragment"
         android:label="capture_fragment"
         tools:layout="@layout/capture_fragment" >
-        <argument
-            android:name="imageParcelable"
-            app:argType="com.e.scannerapp.edit.ImageParcelable"
-            app:nullable="true" />
+
         <action
             android:id="@+id/action_captureFragment_to_editFragment"
             app:destination="@id/editFragment" >
-            <argument
-                android:name="imageParcelable"
-                app:argType="com.e.scannerapp.edit.ImageParcelable"
-                />
         </action>
 
     </fragment>
@@ -29,18 +22,9 @@
         android:name="com.e.scannerapp.edit.EditFragment"
         android:label="edit_fragment"
         tools:layout="@layout/edit_fragment" >
-        <argument
-            android:name="imageParcelable"
-            app:argType="com.e.scannerapp.edit.ImageParcelable"
-            />
         <action
             android:id="@+id/action_editFragment_to_captureFragment"
             app:destination="@id/captureFragment" >
-            <argument
-                android:name="imageParcelable"
-                app:argType="com.e.scannerapp.edit.ImageParcelable"
-                app:nullable="true"
-                />
         </action>
     </fragment>
 
